@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10243b"><title>東京ディズニーランド 待ち時間</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#15243b;font-family:-apple-system,BlinkMacSystemFont,sans-serif}header{background:#10243b;color:#fff;padding:22px 16px}h1{font-size:22px;margin:0 0 8px}small{color:#b9cee4}main{max-width:760px;margin:auto;padding:14px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}input,select,button{font:inherit;border:1px solid #d4deeb;border-radius:10px;padding:10px;background:white}input{flex:1;min-width:160px}button{cursor:pointer}.active{background:#176ad2;color:#fff}#status{font-size:13px;color:#52677f;margin:16px 0}.ride{display:flex;gap:12px;align-items:center;background:#fff;padding:14px;margin:9px 0;border-radius:14px;box-shadow:0 2px 9px #10243b0c}.photo-placeholder{width:94px;height:82px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(135deg,#d9eaf7,#edf0ff);font-size:30px}.detail{flex:1;min-width:0}.name{font-weight:700}.area{font-size:12px;color:#6b7d90;margin-top:4px}.wait{font-size:25px;font-weight:800;color:#1262bc;white-space:nowrap}.wait small{font-size:12px;color:inherit}.wait.closed{font-size:14px;color:#7a8593}.star{border:0;color:#a4b0bf;font-size:24px;padding:4px}.star.on{color:#efaa21}.foot{font-size:12px;color:#65788d;line-height:1.7;margin:22px 2px}.ride-photo{width:82px;height:78px;object-fit:cover;border-radius:10px;display:block;background:#e6ebf2}.photo-source{flex-shrink:0}.photo-placeholder{width:82px;height:78px;flex-shrink:0;display:grid;place-items:center;background:#e6ebf2;border-radius:10px;font-size:25px}@media(max-width:390px){.ride{gap:7px;padding:9px}.ride-photo,.photo-placeholder{width:64px;height:66px}.name{font-size:14px}.wait{font-size:20px}} </style></head>
+<body><header><h1>🏰 東京ディズニーランド 待ち時間</h1><small>個人用・1分ごとにデータを確認</small></header><main><div class="toolbar"><input id="search" placeholder="アトラクションを検索"><select id="sort"><option value="short">短い順</option><option value="long">長い順</option><option value="name">名前順</option></select><select id="area"><option value="">全エリア</option></select><button id="fav">☆ お気に入り</button><button id="reload">↻ 更新</button></div><div id="status" role="status">データを取得しています…</div><div id="rides"></div><p class="foot">写真：Wikimedia Commons（写真をタップすると出典・ライセンスを確認できます）。写真未設定・写真未確認の施設は📷で表示します。データ提供：<a href="https://themeparks.wiki/">ThemeParks.wiki</a>。非公式の個人用ビューアです。未確認写真は自動的に割り当てません。待ち時間や運営状況には遅延・欠落があり得ます。正確な情報は東京ディズニーリゾート公式アプリでご確認ください。</p></main>
+<script>
+const PARK='3cc919f1-d16d-43e0-8c3f-1dd269bd1a42';
+const BASE='https://api.themeparks.wiki/v1/entity/';
+// 英語表記の揺れ（引用符・句読点など）を吸収する。
+function key(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[‘’“”"'`]/g,'').replace(/[–—−]/g,'-').replace(/[^a-z0-9]+/g,' ').trim()}
+const entries=[
+['"it\'s a small world"','イッツ・ア・スモールワールド','ファンタジーランド'],
+['its a small world','イッツ・ア・スモールワールド','ファンタジーランド'],
+['Big Thunder Mountain','ビッグサンダー・マウンテン','ウエスタンランド'],
+['Splash Mountain','スプラッシュ・マウンテン','クリッターカントリー'],
+['Space Mountain','スペース・マウンテン','トゥモローランド'],
+['Enchanted Tale of Beauty and the Beast','美女と野獣「魔法のものがたり」','ファンタジーランド'],
+["Pooh's Hunny Hunt",'プーさんのハニーハント','ファンタジーランド'],
+['Monsters, Inc. Ride & Go Seek!','モンスターズ・インク“ライド＆ゴーシーク！”','トゥモローランド'],
+['Haunted Mansion','ホーンテッドマンション','ファンタジーランド'],
+['Haunted Mansion Holiday Nightmare','ホーンテッドマンション「ホリデーナイトメアー」','ファンタジーランド'],
+['Haunted Mansion Holiday','ホーンテッドマンション「ホリデーナイトメアー」','ファンタジーランド'],
+['Haunted Mansion “Holiday Nightmare”','ホーンテッドマンション「ホリデーナイトメアー」','ファンタジーランド'],
+['Toon Park','トゥーンパーク','トゥーンタウン'],
+['Pirates of the Caribbean','カリブの海賊','アドベンチャーランド'],
+['Jungle Cruise: Wildlife Expeditions','ジャングルクルーズ：ワイルドライフ・エクスペディション','アドベンチャーランド'],
+['Western River Railroad','ウエスタンリバー鉄道','アドベンチャーランド'],
+["Peter Pan's Flight",'ピーターパン空の旅','ファンタジーランド'],
+["Buzz Lightyear's Astro Blasters",'バズ・ライトイヤーのアストロブラスター','トゥモローランド'],
+['Star Tours – The Adventures Continue','スター・ツアーズ：ザ・アドベンチャーズ・コンティニュー','トゥモローランド'],
+['Star Tours: The Adventures Continue','スター・ツアーズ：ザ・アドベンチャーズ・コンティニュー','トゥモローランド'],
+["Roger Rabbit's Car Toon Spin",'ロジャーラビットのカートゥーンスピン','トゥーンタウン'],
+['Beaver Brothers Explorer Canoes','ビーバーブラザーズのカヌー探険','クリッターカントリー'],
+['Country Bear Theater','カントリーベア・シアター','ウエスタンランド'],
+["Mickey's PhilharMagic",'ミッキーのフィルハーマジック','ファンタジーランド'],
+['Castle Carrousel','キャッスルカルーセル','ファンタジーランド'],
+['Tom Sawyer Island Rafts','トムソーヤ島いかだ','ウエスタンランド'],
+["Donald's Boat",'ドナルドのボート','トゥーンタウン'],
+['Stitch Encounter','スティッチ・エンカウンター','トゥモローランド'],
+['Penny Arcade','ペニーアーケード','ワールドバザール'],
+['Westernland Shootin\' Gallery','ウエスタンランド・シューティングギャラリー','ウエスタンランド'],
+['Westernland Shooting Gallery','ウエスタンランド・シューティングギャラリー','ウエスタンランド'],
+["Mickey's House and Meet Mickey",'ミッキーの家とミート・ミッキー','トゥーンタウン'],
+["Minnie's House",'ミニーの家','トゥーンタウン'],
+["Goofy's Paint 'n' Play House",'グーフィーのペイント＆プレイハウス','トゥーンタウン'],
+["Chip 'n Dale's Treehouse",'チップとデールのツリーハウス','トゥーンタウン'],
+["Gadget's Go Coaster",'ガジェットのゴーコースター','トゥーンタウン'],
+["Pinocchio's Daring Journey",'ピノキオの冒険旅行','ファンタジーランド'],
+["Snow White's Adventures",'白雪姫と七人のこびと','ファンタジーランド'],
+["Dumbo the Flying Elephant",'空飛ぶダンボ','ファンタジーランド'],
+['Alice\'s Tea Party','アリスのティーパーティー','ファンタジーランド'],
+['Cinderella\'s Fairy Tale Hall','シンデレラのフェアリーテイル・ホール','ファンタジーランド'],
+['Omnibus','オムニバス','ワールドバザール'],
+['The Happy Ride with Baymax','ベイマックスのハッピーライド','トゥモローランド'],
+['Happy Ride with Baymax','ベイマックスのハッピーライド','トゥモローランド'],
+['Mark Twain Riverboat','蒸気船マークトウェイン号','ウエスタンランド'],
+['Swiss Family Treehouse','スイスファミリー・ツリーハウス','アドベンチャーランド'],
+['The Enchanted Tiki Room: Stitch Presents Aloha E Komo Mai!','魅惑のチキルーム：スティッチ・プレゼンツ“アロハ・エ・コモ・マイ！”','アドベンチャーランド'],
+['Enchanted Tiki Room','魅惑のチキルーム','アドベンチャーランド'],
+['The Many Adventures of Winnie the Pooh','プーさんのハニーハント','ファンタジーランド'],
+['Mickey\'s Magical Music World','ミッキーのマジカルミュージックワールド','ファンタジーランド'],
+['Mickey and Minnie\'s Runaway Railway','ミッキーとミニーのランナウェイ・レイルウェイ','トゥーンタウン'],
+['The Diamond Horseshoe','ザ・ダイヤモンドホースシュー','ウエスタンランド'],
+['Jungle Cruise','ジャングルクルーズ','アドベンチャーランド'],
+['The Haunted Mansion','ホーンテッドマンション','ファンタジーランド'],
+['Mickey\'s Toontown','トゥーンタウン','トゥーンタウン'],
+['Mickey\'s House','ミッキーの家とミート・ミッキー','トゥーンタウン'],
+['Minnies Style Studio','ミニーのスタイルスタジオ','トゥーンタウン'],
+["Minnie's Style Studio",'ミニーのスタイルスタジオ','トゥーンタウン'],
+['Fantasyland Forest Theatre','ファンタジーランド・フォレストシアター','ファンタジーランド'],
+['Adventureland','アドベンチャーランド','アドベンチャーランド']
+];
+// 写真の自動検索は安全性と正確性が確認できるまで停止。
+const AREA_ICON={'ファンタジーランド':'🏰','トゥモローランド':'🚀','ウエスタンランド':'🚂','アドベンチャーランド':'🌴','トゥーンタウン':'🎨','クリッターカントリー':'🌲','ワールドバザール':'🎠'};
+const JP=Object.fromEntries(entries.map(([en,ja,area])=>[key(en),[ja,area]]));
+const AREA={"World Bazaar":"ワールドバザール","Adventureland":"アドベンチャーランド","Westernland":"ウエスタンランド","Critter Country":"クリッターカントリー","Fantasyland":"ファンタジーランド","Toontown":"トゥーンタウン","Tomorrowland":"トゥモローランド"};
+const $=id=>document.getElementById(id);let rides=[],onlyFav=false,lastFetch=0;
+let favorites=[];try{favorites=JSON.parse(localStorage.getItem('tdl-favs')||'[]')}catch{}const favs=new Set(Array.isArray(favorites)?favorites:[]);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+const PHOTO_FILES = {"ホーンテッドマンション「ホリデーナイトメアー」":"Haunted Mansion, Tokyo Disneyland (9407212583).jpg","ビッグサンダー・マウンテン": "Tokyo Disneyland Big Thunder Mountain (53441792286).jpg", "スプラッシュ・マウンテン": "Splash Mountain, Tokyo Disneyland (9409908130).jpg", "プーさんのハニーハント": "Pooh's Hunny Hunt 1.jpg", "ホーンテッドマンション": "Haunted Mansion, Tokyo Disneyland (9407212583).jpg", "ベイマックスのハッピーライド": "Tokyo Disneyland The Happy Ride with Baymax (53440871047).jpg", "美女と野獣「魔法のものがたり」": "Tokyo Disneyland Enchanted Tale of Beauty and the Beast (53441935258).jpg", "イッツ・ア・スモールワールド": "Tokyo Disneyland It's a Small World (53440897752).jpg", "カリブの海賊": "Pirates of the Caribbean (Tokyo Disneyland) 1.jpg", "ジャングルクルーズ：ワイルドライフ・エクスペディション": "Jungle Cruise (Tokyo Disneyland) 1.jpg", "ジャングルクルーズ": "Jungle Cruise (Tokyo Disneyland) 1.jpg", "モンスターズ・インク“ライド＆ゴーシーク！”": "Monsters, Inc. Ride & Go Seek 1.jpg", "スター・ツアーズ：ザ・アドベンチャーズ・コンティニュー": "Tokyo Disneyland Star Tours The Adventures Continue (53440886397).jpg", "ミッキーのフィルハーマジック": "Tokyo Disneyland Mickey's PhilharMagic (53441962758).jpg", "ピノキオの冒険旅行": "Pinocchio's Daring Journey (Tokyo Disneyland) 1.jpg", "魅惑のチキルーム：スティッチ・プレゼンツ“アロハ・エ・コモ・マイ！”": "The Enchanted Tiki Room Stitch Presents Aloha E Komo Mai.jpg", "スイスファミリー・ツリーハウス": "Swiss Family Treehouse.jpg", "ウエスタンリバー鉄道": ""};
+function photoHTML(name){
+ const file=PHOTO_FILES[name];
+ if(!file)return '<div class="photo-placeholder" aria-label="写真未設定">📷</div>';
+ const src='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(file)+'?width=320';
+ const page='https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(file);
+ return '<a class="photo-source" href="'+page+'" target="_blank" rel="noopener" aria-label="'+esc(name)+'の写真の出典"><img class="ride-photo" src="'+src+'" alt="'+esc(name)+'の写真" loading="lazy" onerror="this.onerror=null;this.parentNode.textContent=\'📷\';this.parentNode.className=\'photo-placeholder\'"></a>';
+}
+function render(){const q=$('search').value.trim().toLocaleLowerCase('ja'),a=$('area').value;let list=rides.filter(r=>(!onlyFav||favs.has(r.id))&&(!a||r.area===a)&&r.name.toLocaleLowerCase('ja').includes(q));const num=r=>r.wait===null?Infinity:r.wait;const mode=$('sort').value;list.sort((a,b)=>mode==='name'?a.name.localeCompare(b.name,'ja'):mode==='long'?(b.wait===null?-1:a.wait===null?1:b.wait-a.wait):(num(a)-num(b)));$('rides').innerHTML=list.length?list.map(r=>`<article class="ride"><button class="star ${favs.has(r.id)?'on':''}" data-id="${esc(r.id)}">${favs.has(r.id)?'★':'☆'}</button>${photoHTML(r.name)}<div class="detail"><div class="name">${esc(r.name)}</div><div class="area">${esc(r.area||'エリア情報なし')}</div></div><div class="wait ${r.wait===null?'closed':''}">${r.wait===null?esc(r.status):`${r.wait}<small> 分</small>`}</div></article>`).join(''):'<p>該当するアトラクションがありません。</p>'}
+function fillAreas(){const current=$('area').value,areas=[...new Set(rides.map(r=>r.area).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja'));$('area').innerHTML='<option value="">全エリア</option>'+areas.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');$('area').value=areas.includes(current)?current:''}
+async function load(force=false){if(!force&&Date.now()-lastFetch<60000)return;$('status').textContent='最新データを取得中…';try{const res=await fetch(BASE+PARK+'/live',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();rides=(data.liveData||[]).filter(x=>x.entityType==='ATTRACTION'&&!['toon park','mickeys toontown','adventureland','fantasyland','tomorrowland','westernland','world bazaar','critter country'].includes(key(x.name))).map(x=>{const original=x.name||'名称不明';const translated=JP[key(original)];const standby=x.queue?.STANDBY;const wait=x.status==='OPERATING'&&typeof standby?.waitTime==='number'&&Number.isFinite(standby.waitTime)?standby.waitTime:null;const area=translated?.[1]||AREA[x.area?.name]||x.area?.name||'';const status={OPERATING:'待ち時間未掲載',DOWN:'一時休止',CLOSED:'運営終了',REFURBISHMENT:'休止中'}[x.status]||'情報なし';return{id:x.id,original,name:translated?.[0]||(/^haunted mansion.*holiday/i.test(original)?'ホーンテッドマンション「ホリデーナイトメアー」':original),area,wait,status}});lastFetch=Date.now();fillAreas();render();$('status').textContent=`取得成功：${new Date().toLocaleTimeString('ja-JP')} ・ ${rides.length}件（提供元の更新頻度とは異なります）`;}catch(e){$('status').textContent='データ取得に失敗しました：'+e.message;if(!rides.length)$('rides').textContent='現在、待ち時間を表示できません。'}}
+$('rides').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b)return;const id=b.dataset.id;favs.has(id)?favs.delete(id):favs.add(id);localStorage.setItem('tdl-favs',JSON.stringify([...favs]));render()});['search','sort','area'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));$('fav').onclick=()=>{onlyFav=!onlyFav;$('fav').classList.toggle('active',onlyFav);render()};$('reload').onclick=()=>load(true);load();setInterval(()=>load(),60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+</script></body></html>
