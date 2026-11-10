@@ -1,4 +1,222 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10243b"><title>TDL 待ち時間</title><style>:root{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#15243b;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:#10243b;color:white;padding:22px 16px 16px}h1{font-size:23px;margin:0 0 6px}.sub{font-size:12px;color:#c6d6ea}main{max-width:760px;margin:auto;padding:14px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}select,button,input{font:inherit;border:1px solid #d5dfeb;border-radius:10px;padding:10px;background:white}button{cursor:pointer}.active{background:#176ad2;color:white}#status{font-size:13px;color:#52677f;margin:10px 0 15px}.ride{background:white;border-radius:14px;padding:14px;margin:9px 0;display:flex;align-items:center;gap:12px;box-shadow:0 2px 9px #10243b0c}.details{flex:1;min-width:0}.name{font-weight:700}.area{font-size:12px;color:#6b7d90;margin-top:4px}.wait{font-size:25px;font-weight:800;color:#1262bc;text-align:right;white-space:nowrap}.wait small{font-size:12px}.closed{font-size:14px;color:#7a8593}.star{font-size:24px;border:0;padding:4px;color:#a4b0bf}.star.on{color:#efaa21}.empty{padding:30px;text-align:center;color:#687b90}.foot{font-size:12px;color:#65788d;margin:20px 3px;line-height:1.6}</style></head><body><header><h1>🏰 東京ディズニーランド 待ち時間</h1><div class="sub">個人用ビューア ・ 画面は1分ごとに確認</div></header><main><div class="toolbar"><input id="search" placeholder="アトラクションを検索" aria-label="検索" style="flex:1;min-width:140px"><select id="sort" aria-label="並び順"><option value="short">短い順</option><option value="long">長い順</option><option value="name">名前順</option></select><select id="area" aria-label="エリア"><option value="">全エリア</option></select><button id="fav">☆ お気に入り</button><button id="reload">↻ 更新</button></div><div id="status" role="status">データを取得しています…</div><div id="rides"></div><p class="foot">データ提供: <a href="https://themeparks.wiki/" target="_blank" rel="noopener">ThemeParks.wiki</a>。非公式アプリです。情報は遅延・欠落する場合があります。実際の運営状況は東京ディズニーリゾート公式アプリで確認してください。</p></main><script>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>東京ディズニーランド 待ち時間</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fb;color:#15243b;font-family:-apple-system,sans-serif}
+header{background:#10243b;color:white;padding:22px 16px}
+h1{font-size:22px;margin:0 0 8px}
+header small{color:#c6d6ea}
+main{max-width:760px;margin:auto;padding:14px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+input,select,button{font:inherit;border:1px solid #d5dfeb;border-radius:10px;padding:10px;background:white}
+input{flex:1;min-width:150px}
+button{cursor:pointer}
+#status{font-size:13px;color:#52677f;margin:15px 0}
+.ride{background:white;border-radius:14px;padding:14px;margin:9px 0;display:flex;align-items:center;gap:10px}
+.details{flex:1;min-width:0}
+.name{font-weight:bold}
+.area{font-size:12px;color:#6b7d90;margin-top:5px}
+.wait{font-size:23px;font-weight:bold;color:#1262bc;white-space:nowrap}
+.closed{font-size:14px;color:#7a8593}
+.star{border:0;font-size:24px;color:#a4b0bf;padding:4px}
+.on{color:#efaa21}
+.active{background:#176ad2;color:white}
+footer{font-size:12px;color:#65788d;line-height:1.7;margin:20px 0}
+</style>
+</head>
+<body>
+<header>
+<h1>🏰 東京ディズニーランド 待ち時間</h1>
+<small>日本語表示・1分ごとに更新確認</small>
+</header>
+<main>
+<div class="toolbar">
+<input id="search" placeholder="アトラクションを検索">
+<select id="sort">
+<option value="short">短い順</option>
+<option value="long">長い順</option>
+<option value="name">名前順</option>
+</select>
+<select id="area">
+<option value="">全エリア</option>
+</select>
+<button id="fav">☆ お気に入り</button>
+<button id="reload">↻ 更新</button>
+</div>
+<div id="status">データを取得しています…</div>
+<div id="rides"></div>
+<footer>
+データ提供：ThemeParks.wiki。非公式アプリです。
+待ち時間や運営状況は参考情報です。
+正確な情報は東京ディズニーリゾート公式アプリでご確認ください。
+</footer>
+</main>
+<script>
+const PARK="3cc919f1-d16d-43e0-8c3f-1dd269bd1a42";
+const API="https://api.themeparks.wiki/v1/entity/";
+const JP={
+"Big Thunder Mountain":["ビッグサンダー・マウンテン","ウエスタンランド"],
+"Splash Mountain":["スプラッシュ・マウンテン","クリッターカントリー"],
+"Space Mountain":["スペース・マウンテン","トゥモローランド"],
+"Enchanted Tale of Beauty and the Beast":["美女と野獣“魔法のものがたり”","ファンタジーランド"],
+"Pooh's Hunny Hunt":["プーさんのハニーハント","ファンタジーランド"],
+"Monsters, Inc. Ride & Go Seek!":["モンスターズ・インク“ライド＆ゴーシーク！”","トゥモローランド"],
+"Haunted Mansion":["ホーンテッドマンション","ファンタジーランド"],
+"Pirates of the Caribbean":["カリブの海賊","アドベンチャーランド"],
+"Jungle Cruise: Wildlife Expeditions":["ジャングルクルーズ：ワイルドライフ・エクスペディション","アドベンチャーランド"],
+"Western River Railroad":["ウエスタンリバー鉄道","アドベンチャーランド"],
+"Peter Pan's Flight":["ピーターパン空の旅","ファンタジーランド"],
+"it's a small world":["イッツ・ア・スモールワールド","ファンタジーランド"],
+"It's a Small World":["イッツ・ア・スモールワールド","ファンタジーランド"],
+"Buzz Lightyear's Astro Blasters":["バズ・ライトイヤーのアストロブラスター","トゥモローランド"],
+"Star Tours – The Adventures Continue":["スター・ツアーズ：ザ・アドベンチャーズ・コンティニュー","トゥモローランド"],
+"Star Tours - The Adventures Continue":["スター・ツアーズ：ザ・アドベンチャーズ・コンティニュー","トゥモローランド"],
+"Roger Rabbit's Car Toon Spin":["ロジャーラビットのカートゥーンスピン","トゥーンタウン"],
+"Beaver Brothers Explorer Canoes":["ビーバーブラザーズのカヌー探険","クリッターカントリー"],
+"Country Bear Theater":["カントリーベア・シアター","ウエスタンランド"],
+"Mickey's PhilharMagic":["ミッキーのフィルハーマジック","ファンタジーランド"],
+"Castle Carrousel":["キャッスルカルーセル","ファンタジーランド"],
+"Tom Sawyer Island Rafts":["トムソーヤ島いかだ","ウエスタンランド"],
+"Donald's Boat":["ドナルドのボート","トゥーンタウン"],
+"Stitch Encounter":["スティッチ・エンカウンター","トゥモローランド"],
+"Penny Arcade":["ペニーアーケード","ワールドバザール"],
+"Toon Park":["トゥーンパーク","トゥーンタウン"],
+"Cinderella's Fairy Tale Hall":["シンデレラのフェアリーテイル・ホール","ファンタジーランド"],
+"Westernland Shootin' Gallery":["ウエスタンランド・シューティングギャラリー","ウエスタンランド"],
+"Swiss Family Treehouse":["スイスファミリー・ツリーハウス","アドベンチャーランド"],
+"Enchanted Tiki Room: Stitch Presents Aloha E Komo Mai!":["魅惑のチキルーム：スティッチ・プレゼンツ","アドベンチャーランド"],
+"Mark Twain Riverboat":["蒸気船マークトウェイン号","ウエスタンランド"],
+"Alice's Tea Party":["アリスのティーパーティー","ファンタジーランド"],
+"Dumbo the Flying Elephant":["空飛ぶダンボ","ファンタジーランド"],
+"Pinocchio's Daring Journey":["ピノキオの冒険旅行","ファンタジーランド"],
+"Snow White's Adventures":["白雪姫と七人のこびと","ファンタジーランド"],
+"Gadget's Go Coaster":["ガジェットのゴーコースター","トゥーンタウン"],
+"Goofy's Paint 'n' Play House":["グーフィーのペイント＆プレイハウス","トゥーンタウン"],
+"Chip 'n Dale's Treehouse":["チップとデールのツリーハウス","トゥーンタウン"],
+"Minnie's House":["ミニーの家","トゥーンタウン"],
+"Mickey's House and Meet Mickey":["ミッキーの家とミート・ミッキー","トゥーンタウン"],
+"Omnibus":["オムニバス","ワールドバザール"],
+"Happy Ride with Baymax":["ベイマックスのハッピーライド","トゥモローランド"],
+"The Happy Ride with Baymax":["ベイマックスのハッピーライド","トゥモローランド"],
+"Roger Rabbit’s Car Toon Spin":["ロジャーラビットのカートゥーンスピン","トゥーンタウン"]
+};
+const AREAS={
+"World Bazaar":"ワールドバザール",
+"Adventureland":"アドベンチャーランド",
+"Westernland":"ウエスタンランド",
+"Critter Country":"クリッターカントリー",
+"Fantasyland":"ファンタジーランド",
+"Toontown":"トゥーンタウン",
+"Tomorrowland":"トゥモローランド"
+};
+const $=id=>document.getElementById(id);
+let rides=[],onlyFav=false,lastFetch=0;
+const favs=new Set(JSON.parse(localStorage.getItem("tdl-favs")||"[]"));
+function esc(s){
+return String(s??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",
+'"':"&quot;","'":"&#39;"
+})[c]);
+}
+function render(){
+let q=$("search").value.toLowerCase().trim();
+let a=$("area").value;
+let list=rides.filter(r=>
+(!onlyFav||favs.has(r.id))&&
+(!a||r.area===a)&&
+(r.name.toLowerCase().includes(q)||r.original.toLowerCase().includes(q))
+);
+let value=r=>r.wait===null?9999:r.wait;
+list.sort((a,b)=>{
+if($("sort").value==="name")return a.name.localeCompare(b.name,"ja");
+if($("sort").value==="long")return value(b)-value(a);
+return value(a)-value(b);
+});
+$("rides").innerHTML=list.length?list.map(r=>`
+<article class="ride">
+<button class="star ${favs.has(r.id)?"on":""}" data-id="${esc(r.id)}">${favs.has(r.id)?"★":"☆"}</button>
+<div class="details">
+<div class="name">${esc(r.name)}</div>
+<div class="area">${esc(r.area||"エリア不明")}</div>
+</div>
+<div class="wait ${r.wait===null?"closed":""}">
+${r.wait===null?esc(r.status):r.wait+"<small> 分</small>"}
+</div>
+</article>`).join(""):"<p>該当するアトラクションがありません。</p>";
+}
+function fillAreas(){
+let current=$("area").value;
+let areas=[...new Set(rides.map(r=>r.area).filter(Boolean))].sort();
+$("area").innerHTML='<option value="">全エリア</option>'+
+areas.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("");
+$("area").value=areas.includes(current)?current:"";
+}
+async function load(force=false){
+if(!force&&Date.now()-lastFetch<60000)return;
+$("status").textContent="最新データを取得中…";
+try{
+let res=await fetch(API+PARK+"/live");
+if(!res.ok)throw Error("HTTP "+res.status);
+let data=await res.json();
+rides=(data.liveData||[])
+.filter(x=>x.entityType==="ATTRACTION")
+.map(x=>{
+let original=x.name||"名称不明";
+let translated=JP[original];
+let standby=x.queue?.STANDBY;
+let wait=typeof standby?.waitTime==="number"?standby.waitTime:null;
+let area=translated?.[1]||AREAS[x.area?.name]||x.area?.name||"";
+let status={
+OPERATING:"待ち時間未掲載",
+DOWN:"一時休止",
+CLOSED:"運営終了",
+REFURBISHMENT:"休止中"
+}[x.status]||"情報なし";
+return{
+id:x.id,original,
+name:translated?.[0]||original,
+area,wait,status
+};
+});
+lastFetch=Date.now();
+fillAreas();
+render();
+$("status").textContent="取得成功："+new Date().toLocaleTimeString("ja-JP")+" ・ "+rides.length+"件";
+}catch(e){
+$("status").textContent="データ取得失敗："+e.message;
+if(!rides.length)$("rides").textContent="現在データを表示できません。";
+}
+}
+$("rides").addEventListener("click",e=>{
+let b=e.target.closest("[data-id]");
+if(!b)return;
+let id=b.dataset.id;
+if(favs.has(id))favs.delete(id);
+else favs.add(id);
+localStorage.setItem("tdl-favs",JSON.stringify([...favs]));
+render();
+});
+["search","sort","area"].forEach(id=>{
+$(id).addEventListener(id==="search"?"input":"change",render);
+});
+$("fav").onclick=()=>{
+onlyFav=!onlyFav;
+$("fav").classList.toggle("active",onlyFav);
+render();
+};
+$("reload").onclick=()=>load(true);
+load();
+setInterval(()=>load(),60000);
+document.addEventListener("visibilitychange",()=>{
+if(!document.hidden)load();
+});
+</script>
+</body>
+</html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#10243b"><title>TDL 待ち時間</title><style>:root{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#15243b;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}header{background:#10243b;color:white;padding:22px 16px 16px}h1{font-size:23px;margin:0 0 6px}.sub{font-size:12px;color:#c6d6ea}main{max-width:760px;margin:auto;padding:14px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}select,button,input{font:inherit;border:1px solid #d5dfeb;border-radius:10px;padding:10px;background:white}button{cursor:pointer}.active{background:#176ad2;color:white}#status{font-size:13px;color:#52677f;margin:10px 0 15px}.ride{background:white;border-radius:14px;padding:14px;margin:9px 0;display:flex;align-items:center;gap:12px;box-shadow:0 2px 9px #10243b0c}.details{flex:1;min-width:0}.name{font-weight:700}.area{font-size:12px;color:#6b7d90;margin-top:4px}.wait{font-size:25px;font-weight:800;color:#1262bc;text-align:right;white-space:nowrap}.wait small{font-size:12px}.closed{font-size:14px;color:#7a8593}.star{font-size:24px;border:0;padding:4px;color:#a4b0bf}.star.on{color:#efaa21}.empty{padding:30px;text-align:center;color:#687b90}.foot{font-size:12px;color:#65788d;margin:20px 3px;line-height:1.6}</style></head><body><header><h1>🏰 東京ディズニーランド 待ち時間</h1><div class="sub">個人用ビューア ・ 画面は1分ごとに確認</div></header><main><div class="toolbar"><input id="search" placeholder="アトラクションを検索" aria-label="検索" style="flex:1;min-width:140px"><select id="sort" aria-label="並び順"><option value="short">短い順</option><option value="long">長い順</option><option value="name">名前順</option></select><select id="area" aria-label="エリア"><option value="">全エリア</option></select><button id="fav">☆ お気に入り</button><button id="reload">↻ 更新</button></div><div id="status" role="status">データを取得しています…</div><div id="rides"></div><p class="foot">データ提供: <a href="https://themeparks.wiki/" target="_blank" rel="noopener">ThemeParks.wiki</a>。非公式アプリです。情報は遅延・欠落する場合があります。実際の運営状況は東京ディズニーリゾート公式アプリで確認してください。</p></main><script>
 const JP_NAMES={
 "Big Thunder Mountain":"ビッグサンダー・マウンテン",
 "Space Mountain":"スペース・マウンテン",
