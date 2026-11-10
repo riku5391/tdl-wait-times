@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>東京ディズニーランド 写真付き待ち時間テスト</title>
+<style>
+body{margin:0;background:#f3f6fb;font-family:-apple-system,sans-serif}
+#loading{padding:30px;color:#334155}
+.ride-photo{width:82px;height:78px;object-fit:cover;border-radius:10px;background:#e6ebf2;flex-shrink:0}
+.photo-link{display:block;flex-shrink:0}
+.photo-fallback{width:82px;height:78px;border-radius:10px;background:#e6ebf2;display:grid;place-items:center;flex-shrink:0;font-size:24px}
+@media(max-width:390px){.ride{gap:7px!important;padding:9px!important}.ride-photo,.photo-fallback{width:65px;height:66px}.name{font-size:14px}.wait{font-size:20px!important}}
+</style>
+</head>
+<body>
+<div id="loading">アプリを読み込んでいます…</div>
+<script>
+(async()=>{
+try{
+const response=await fetch('./index-backup.html',{cache:'no-store'});
+if(!response.ok)throw Error('元のアプリを取得できません: '+response.status);
+let html=await response.text();
+const photos={
+'ビッグサンダー・マウンテン':'Tokyo Disneyland Big Thunder Mountain (53441792286).jpg',
+'スプラッシュ・マウンテン':'Splash Mountain, Tokyo Disneyland (9409908130).jpg',
+'プーさんのハニーハント':"Pooh's Hunny Hunt 1.jpg",
+'ホーンテッドマンション':'Haunted Mansion, Tokyo Disneyland (9407212583).jpg',
+'ベイマックスのハッピーライド':'Tokyo Disneyland The Happy Ride with Baymax (53440871047).jpg'
+};
+const css=document.querySelector('style').textContent;
+const additions=`
+const PHOTO_FILES=${JSON.stringify(photos)};
+function photoHTML(name){
+ const file=PHOTO_FILES[name];
+ if(!file)return '<div class="photo-fallback" aria-hidden="true">🏰</div>';
+ const url='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(file)+'?width=320';
+ const page='https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(file);
+ return '<a class="photo-link" href="'+page+'" target="_blank" rel="noopener" aria-label="写真の出典"><img class="ride-photo" src="'+url+'" alt="'+esc(name)+'の写真" loading="lazy" onerror="this.onerror=null;this.parentNode.textContent=\'🏰\';this.parentNode.className=\'photo-fallback\'"></a>';
+}
+`;
+html=html.replace('</style>',css+'</style>');
+html=html.replace('function render(){',additions+'function render(){');
+html=html.replace('<div class="detail"><div class="name">','${photoHTML(r.name)}<div class="detail"><div class="name">');
+html=html.replace('データ提供：<a','写真：Wikimedia Commons（写真をタップすると出典を表示）。データ提供：<a');
+document.open();
+document.write(html);
+document.close();
+}catch(error){
+ document.getElementById('loading').textContent='読み込みに失敗しました: '+error.message;
+}
+})();
+</script>
+</body>
+</html>
