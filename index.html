@@ -167,7 +167,7 @@ rides=(data.liveData||[])
 .filter(x=>x.entityType==="ATTRACTION")
 .map(x=>{
 let original=x.name||"名称不明";
-let translated=JP[original];
+let translated=JP[original]||JP[original.replace(/[“”‘’]/g,"'").trim()];
 let standby=x.queue?.STANDBY;
 let wait=typeof standby?.waitTime==="number"?standby.waitTime:null;
 let area=translated?.[1]||AREAS[x.area?.name]||x.area?.name||"";
