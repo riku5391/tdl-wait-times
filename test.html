@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TDL 写真表示テスト</title>
+<style>body{font-family:-apple-system,sans-serif;background:#f2f6fb;margin:0;padding:18px;color:#17283e}h2{font-size:22px}.ride{display:flex;align-items:center;gap:14px;background:white;border-radius:14px;padding:12px;margin:12px 0;box-shadow:0 2px 8px #0001}.ride img{width:110px;height:95px;object-fit:cover;border-radius:10px;background:#e4eaf2;flex-shrink:0}.ride b{font-size:16px}.ride small{display:block;color:#64748b;margin-top:6px}footer{font-size:12px;line-height:1.8}</style>
+<h2>🏰 東京ディズニーランド 写真テスト</h2>
+<p>5つのアトラクションの写真を確認するページです。</p>
+<div id="rides"></div>
+<footer>写真：Wikimedia Commons。各画像の著作者・ライセンスはリンク先を参照してください。</footer>
+<script>
+const photos=[
+["ビッグサンダー・マウンテン","Tokyo Disneyland Big Thunder Mountain (53441792286).jpg"],
+["スプラッシュ・マウンテン","Splash Mountain, Tokyo Disneyland (9409908130).jpg"],
+["プーさんのハニーハント","Pooh's Hunny Hunt 1.jpg"],
+["ホーンテッドマンション","Haunted Mansion, Tokyo Disneyland (9407212583).jpg"],
+["ベイマックスのハッピーライド","Tokyo Disneyland The Happy Ride with Baymax (53440871047).jpg"]
+];
+document.getElementById("rides").innerHTML=photos.map(([name,file])=>{
+const src="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+encodeURIComponent(file)+"?width=320";
+const page="https://commons.wikimedia.org/wiki/File:"+encodeURIComponent(file);
+return '<div class="ride"><img src="'+src+'" alt="'+name+'" onerror="this.alt=\'写真の読み込みに失敗\'"><div><b>'+name+'</b><small><a href="'+page+'" target="_blank">写真の出典</a></small></div></div>';
+}).join("");
+</script></html>
