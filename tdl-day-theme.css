@@ -1,0 +1,17 @@
+/* TDL daytime fairy-tale theme — presentation only; existing functions unchanged */
+:root{--sky:#eaf8ff;--blue:#0878db;--ink:#18385f;--gold:#f4bd51;--pink:#ff85b5}
+body{color:var(--ink);background:linear-gradient(180deg,#c9edff 0,#effaff 310px,#f7faff 100%);background-attachment:fixed}
+header{position:relative;overflow:hidden;text-align:center;color:#fff;background:linear-gradient(180deg,#168bea,#64c7fb 67%,#d7f3ff);padding:26px 12px 31px;border-bottom:5px solid #ffd37b}
+header:before{content:"☁️  ✨  🏰  ✨  ☁️";display:block;font-size:36px;letter-spacing:7px;line-height:1.45;filter:drop-shadow(0 2px 2px #2773aa55)}
+header h1{font-size:clamp(19px,5vw,26px);color:#fff;text-shadow:0 2px 4px #1459a6;margin:3px 0 5px}
+header small{color:#fff;font-weight:600;text-shadow:0 1px 3px #2669a4}
+main{padding-top:17px}
+.app-tabs{gap:9px}.app-tabs button{border:2px solid #a9d5f3;border-radius:16px;box-shadow:0 3px 0 #b7dff4;background:#fff;color:#1761a7;font-weight:800}
+.app-tabs button.selected,.active{background:linear-gradient(135deg,#069cf3,#0b62c9)!important;color:#fff!important;border-color:#0873d4!important}
+.toolbar{gap:8px}.toolbar input,.toolbar select,.toolbar button{border-radius:13px;border:1.5px solid #b9dbf1;box-shadow:0 2px 6px #2378bd12}
+#wait-panel>div:first-child{background:#fff7e5!important;border:1px solid #ffe1a5}
+.ride{border:1px solid #d8eafb;border-radius:18px;box-shadow:0 4px 13px #2366a51c;background:linear-gradient(120deg,#fff,#fffdf9)}
+.ride-photo,.photo-placeholder{border-radius:13px}.name{color:#1a3d72}.area{color:#147bc1;font-weight:700}.wait{color:#e64c85}.star.on{color:#e8a522}
+#status,#photo-health{color:#3b668d!important}#photo-diagnostics{border:1px solid #cde8fa}
+.graph-frame{border-radius:19px;background:#eef9ff;min-height:1550px}.foot{padding:16px;background:#ffffffcc;border-radius:16px}
+@media(max-width:390px){header:before{font-size:30px;letter-spacing:3px}.app-tabs button{font-size:14px;padding:12px 4px}}
