@@ -92,80 +92,119 @@
   {
     "file": "Monsters, Inc. Ride & Go Seek! (9407169631).jpg",
     "local": "assets/attractions/ride-10.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Monsters,_Inc._Ride_%26_Go_Seek!_(9407169631).jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/76562640@N00\">Rob Young</a> from United Kingdom",
+    "bytes": 19318
   },
   {
     "file": "Tokyo Disneyland Star Tours The Adventures Continue (53440886397).jpg",
     "local": "assets/attractions/ride-11.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tokyo_Disneyland_Star_Tours_The_Adventures_Continue_(53440886397).jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/31029865@N06\">Dick Thomas Johnson</a> from Tokyo, Japan",
+    "bytes": 32041
   },
   {
     "file": "Tokyo Disneyland Mickey's PhilharMagic (53441962758).jpg",
     "local": "assets/attractions/ride-12.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tokyo_Disneyland_Mickey%27s_PhilharMagic_(53441962758).jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/31029865@N06\">Dick Thomas Johnson</a> from Tokyo, Japan",
+    "bytes": 36961
   },
   {
     "file": "Pinocchio's Daring Journey (Tokyo Disneyland) 1.jpg",
     "local": "assets/attractions/ride-13.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Pinocchio%27s_Daring_Journey_(Tokyo_Disneyland)_1.jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "Jeremy Thompson",
+    "bytes": 27502
   },
   {
     "file": "The Enchanted Tiki Room Stitch Presents Aloha E Komo Mai.jpg",
     "local": "assets/attractions/ride-14.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Enchanted_Tiki_Room_Stitch_Presents_Aloha_E_Komo_Mai.jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "Jeremy Thompson",
+    "bytes": 50349
   },
   {
     "file": "Swiss Family Treehouse.jpg",
     "local": "assets/attractions/ride-15.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Swiss_Family_Treehouse.jpg",
+    "license": "CC BY-SA 3.0",
+    "artist_html": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:ARICAD&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:ARICAD (page does not exist)\">ARICAD</a>",
+    "bytes": 44677
   },
   {
     "file": "Tokyo Western River Railroad.jpg",
     "local": "assets/attractions/ride-16.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tokyo_Western_River_Railroad.jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "Rudy Herman",
+    "bytes": 34172
   },
   {
     "file": "Gadget's Go Coaster Tokyo Disneyland.jpg",
     "local": "assets/attractions/ride-17.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Gadget%27s_Go_Coaster_Tokyo_Disneyland.jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/10165467@N04\">e_chaya</a>",
+    "bytes": 33157
   },
   {
     "file": "Tokyo Disneyland Mickey's House and Meet Mickey (53441819446).jpg",
     "local": "assets/attractions/ride-18.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tokyo_Disneyland_Mickey%27s_House_and_Meet_Mickey_(53441819446).jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/31029865@N06\">Dick Thomas Johnson</a> from Tokyo, Japan",
+    "bytes": 34327
   },
   {
     "file": "Tokyo Disneyland Buzz Lightyear's Astro Blasters (53440871942).jpg",
     "local": "assets/attractions/ride-19.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tokyo_Disneyland_Buzz_Lightyear%27s_Astro_Blasters_(53440871942).jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/31029865@N06\">Dick Thomas Johnson</a> from Tokyo, Japan",
+    "bytes": 21093
   },
   {
     "file": "Tokyo Disneyland Space Mountain (53440866932).jpg",
     "local": "assets/attractions/ride-20.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Tokyo_Disneyland_Space_Mountain_(53440866932).jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/31029865@N06\">Dick Thomas Johnson</a> from Tokyo, Japan",
+    "bytes": 33855
   },
   {
     "file": "TDL Dumbo the Flying Elephant.jpg",
     "local": "assets/attractions/ride-21.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:TDL_Dumbo_the_Flying_Elephant.jpg",
+    "license": "CC BY-SA 3.0",
+    "artist_html": "Photo by ARICAD",
+    "bytes": 24678
   },
   {
     "file": "Peter Pan's Flight Tokyo Disneyland - 5886483675.jpg",
     "local": "assets/attractions/ride-22.jpg",
-    "status": "failed",
-    "error": "HTTP Error 429: Too Many Requests"
+    "status": "downloaded",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Peter_Pan%27s_Flight_Tokyo_Disneyland_-_5886483675.jpg",
+    "license": "CC BY 2.0",
+    "artist_html": "Jeremy Thompson",
+    "bytes": 22724
   },
   {
     "file": "TDL Country Bear Theater.jpg",
