@@ -1,5 +1,8 @@
 name: Build photo-embedded Disneyland preview
 on:
+  push:
+    branches:
+      - photo-preview
   workflow_dispatch:
 permissions:
   contents: read
