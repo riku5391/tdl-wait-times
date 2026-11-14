@@ -1,0 +1,29 @@
+name: Build photo-embedded Disneyland preview
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Embed repository photos into preview
+        run: python build_offline.py integrated-source.html assets/attractions integrated-offline.html
+      - name: Verify embedded images
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('integrated-offline.html').read_text()
+          assert html.count('data:image/jpeg;base64,') >= 23, 'Expected 23 local photos'
+          assert 'window.__TDL_EMBEDDED_PHOTOS' in html
+          print('23 JPEG assets embedded')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tdl-photo-embedded-preview
+          path: integrated-offline.html
+          retention-days: 14
